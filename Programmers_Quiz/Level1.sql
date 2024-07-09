@@ -97,7 +97,7 @@ FROM ANIMAL_INS
 ORDER BY DATETIME
 LIMIT 1
 
-06. 문제 설명
+Q6. 문제 설명
 ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -114,7 +114,7 @@ SELECT animal_id
 FROM animal_ins
 WHERE name IS NOT NULL;
 
-07. 문제 설명
+Q7. 문제 설명
 다음은 식품창고의 정보를 담은 FOOD_WAREHOUSE 테이블입니다. FOOD_WAREHOUSE 테이블은 다음과 같으며 WAREHOUSE_ID, WAREHOUSE_NAME, ADDRESS, TLNO, FREEZER_YN는 창고 ID, 창고 이름, 창고 주소, 전화번호, 냉동시설 여부를 의미합니다.
 
 Column name	Type	Nullable
@@ -132,7 +132,7 @@ FROM FOOD_WAREHOUSE
 WHERE ADDRESS LIKE '경기도%'
 ORDER BY WAREHOUSE_ID ASC
 
-08. 문제 설명
+Q8. 문제 설명
 다음은 어느 의류 쇼핑몰에서 판매 중인 상품들의 정보를 담은 PRODUCT 테이블입니다. PRODUCT 테이블은 아래와 같은 구조로 되어있으며, PRODUCT_ID, PRODUCT_CODE, PRICE는 각각 상품 ID, 상품코드, 판매가를 나타냅니다.
 
 Column name	Type	Nullable
@@ -148,7 +148,7 @@ PRODUCT 테이블에서 판매 중인 상품 중 가장 높은 판매가를 출�
 SELECT MAX(price) AS MAX_PRICE
 FROM PRODUCT
 
-09. 문제 설명
+Q9. 문제 설명
 다음은 종합병원에 속한 의사 정보를 담은DOCTOR 테이블입니다. DOCTOR 테이블은 다음과 같으며 DR_NAME, DR_ID, LCNS_NO, HIRE_YMD, MCDP_CD, TLNO는 각각 의사이름, 의사ID, 면허번호, 고용일자, 진료과코드, 전화번호를 나타냅니다.
 
 Column name	Type	Nullable
@@ -167,7 +167,7 @@ FROM DOCTOR
 WHERE (MCDP_CD = 'CS') OR (MCDP_CD = 'GS')
 ORDER BY HIRE_YMD DESC, DR_NAME ASC
 
-10. 문제 설명
+Q10. 문제 설명
 ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -192,7 +192,7 @@ SELECT name, datetime
 FROM animal_ins
 ORDER BY animal_id DESC;
 
-11. 문제 설명
+Q11. 문제 설명
 다음은 식품공장의 정보를 담은 FOOD_FACTORY 테이블입니다. FOOD_FACTORY 테이블은 다음과 같으며 FACTORY_ID, FACTORY_NAME, ADDRESS, TLNO는 각각 공장 ID, 공장 이름, 주소, 전화번호를 의미합니다.
 
 Column name	Type	Nullable
@@ -209,7 +209,7 @@ FROM FOOD_FACTORY
 WHERE ADDRESS LIKE '강원도%'
 ORDER BY FACTORY_ID
 
-12. 문제 설명
+Q12. 문제 설명
 다음은 어느 의류 쇼핑몰에 가입한 회원 정보를 담은 USER_INFO 테이블입니다. USER_INFO 테이블은 아래와 같은 구조로 되어있으며, USER_ID, GENDER, AGE, JOINED는 각각 회원 ID, 성별, 나이, 가입일을 나타냅니다.
 
 Column name	Type	Nullable
@@ -227,7 +227,7 @@ SELECT count(*) AS USERS
 FROM USER_INFO
 WHERE age IS NULL
 
-13. 문제 설명
+Q13. 문제 설명
 ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -244,7 +244,7 @@ SELECT ANIMAL_ID
 FROM ANIMAL_INS
 WHERE NAME IS NULL
 
-14. 문제 설명
+Q14. 문제 설명
 다음은 어느 의류 쇼핑몰에 가입한 회원 정보를 담은 USER_INFO 테이블입니다. USER_INFO 테이블은 아래와 같은 구조로 되어있으며 USER_ID, GENDER, AGE, JOINED는 각각 회원 ID, 성별, 나이, 가입일을 나타냅니다.
 
 Column name	Type	Nullable
@@ -263,7 +263,7 @@ FROM USER_INFO
 WHERE (AGE BETWEEN 20 AND 29) AND 
     (DATE(JOINED) BETWEEN '2021-01-01' AND '2021-12-31')
     
-15. 문제 설명
+Q15. 문제 설명
 FIRST_HALF 테이블은 아이스크림 가게의 상반기 주문 정보를 담은 테이블입니다.FIRST_HALF 테이블 구조는 다음과 같으며, SHIPMENT_ID, FLAVOR, TOTAL_ORDER는 각각 아이스크림 공장에서 아이스크림 가게까지의 출하 번호, 아이스크림 맛, 상반기 아이스크림 총주문량을 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -278,7 +278,7 @@ SELECT FLAVOR
 FROM FIRST_HALF
 ORDER BY TOTAL_ORDER DESC, SHIPMENT_ID;
 
-16. 문제 설명
+Q16. 문제 설명
 다음은 종합병원에 등록된 환자정보를 담은 PATIENT 테이블입니다. PATIENT 테이블은 다음과 같으며 PT_NO, PT_NAME, GEND_CD, AGE, TLNO는 각각 환자번호, 환자이름, 성별코드, 나이, 전화번호를 의미합니다.
 
 Column name	Type	Nullable
@@ -296,7 +296,7 @@ FROM PATIENT
 WHERE (AGE<=12) AND (GEND_CD='W')
 ORDER BY AGE DESC, PT_NAME ASC
 
-17. 문제 설명
+Q17. 문제 설명
 다음은 어느 한 서점에서 판매중인 도서들의 도서 정보(BOOK) 테이블입니다.
 
 BOOK 테이블은 각 도서의 정보를 담은 테이블로 아래와 같은 구조로 되어있습니다.
@@ -317,7 +317,7 @@ FROM BOOK
 WHERE (CATEGORY LIKE '인문') AND (PUBLISHED_DATE LIKE '2021%')
 ORDER BY PUBLISHED_DATE ASC
 
-18. 문제 설명
+Q18. 문제 설명
 다음은 아이스크림 가게의 상반기 주문 정보를 담은 FIRST_HALF 테이블과 아이스크림 성분에 대한 정보를 담은 ICECREAM_INFO 테이블입니다. FIRST_HALF 테이블 구조는 다음과 같으며, SHIPMENT_ID, FLAVOR, TOTAL_ORDER 는 각각 아이스크림 공장에서 아이스크림 가게까지의 출하 번호, 아이스크림 맛, 상반기 아이스크림 총주문량을 나타냅니다. FIRST_HALF 테이블의 기본 키는 FLAVOR입니다.
 
 NAME	TYPE	NULLABLE
@@ -340,7 +340,7 @@ ON FH.FLAVOR = II.FLAVOR
 WHERE (FH.TOTAL_ORDER >3000) AND (II.INGREDIENT_TYPE LIKE 'fruit_based')
 ORDER BY FH.TOTAL_ORDER DESC
 
-19. 문제 설명
+Q19. 문제 설명
 다음은 어느 자동차 대여 회사에서 대여중인 자동차들의 정보를 담은 CAR_RENTAL_COMPANY_CAR 테이블입니다. CAR_RENTAL_COMPANY_CAR 테이블은 아래와 같은 구조로 되어있으며, CAR_ID, CAR_TYPE, DAILY_FEE, OPTIONS 는 각각 자동차 ID, 자동차 종류, 일일 대여 요금(원), 자동차 옵션 리스트를 나타냅니다.
 
 Column name	Type	Nullable
@@ -358,7 +358,7 @@ SELECT ROUND(AVG(DAILY_FEE), 0) AS AVERAGE_FEE
 FROM CAR_RENTAL_COMPANY_CAR
 WHERE CAR_TYPE LIKE 'SUV'
 
-20. 문제 설명
+Q20. 문제 설명
 ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -382,7 +382,7 @@ SELECT *
 FROM ANIMAL_INS
 ORDER BY ANIMAL_ID
 
-21. 문제 설명
+Q21. 문제 설명
 다음은 어느 자동차 대여 회사에서 대여중인 자동차들의 정보를 담은 CAR_RENTAL_COMPANY_CAR 테이블입니다. CAR_RENTAL_COMPANY_CAR 테이블은 아래와 같은 구조로 되어있으며, CAR_ID, CAR_TYPE, DAILY_FEE, OPTIONS 는 각각 자동차 ID, 자동차 종류, 일일 대여 요금(원), 자동차 옵션 리스트를 나타냅니다.
 
 Column name	Type	Nullable
@@ -401,7 +401,7 @@ FROM CAR_RENTAL_COMPANY_CAR
 WHERE OPTIONS LIKE '%네비게이션%'
 ORDER BY CAR_ID DESC
 
-22. 문제 설명
+Q22. 문제 설명
 낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
 
 Column name	Type	Nullable
@@ -421,7 +421,7 @@ SELECT COUNT(*) AS FISH_COUNT
 FROM FISH_INFO
 WHERE LENGTH IS NULL
 
-23. 문제 설명
+Q23. 문제 설명
 낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
 
 Column name	Type	Nullable
@@ -440,7 +440,7 @@ FISH_INFO 테이블에서 잡은 물고기 중 가장 큰 물고기의 길이를
 SELECT CONCAT(MAX(LENGTH),'cm') AS MAX_LENGTH
 FROM FISH_INFO
 
-24. 문제 설명
+Q24. 문제 설명
 ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
 NAME	TYPE	NULLABLE
@@ -456,7 +456,7 @@ SEX_UPON_INTAKE	VARCHAR(N)	FALSE
 SELECT MAX(DATETIME) AS 시간
 FROM ANIMAL_INS
 
-25. 문제 설명
+Q25. 문제 설명
 DEVELOPER_INFOS 테이블은 개발자들의 프로그래밍 스킬 정보를 담은 테이블입니다. DEVELOPER_INFOS 테이블 구조는 다음과 같으며, ID, FIRST_NAME, LAST_NAME, EMAIL, SKILL_1, SKILL_2, SKILL_3는 각각 ID, 이름, 성, 이메일, 첫 번째 스킬, 두 번째 스킬, 세 번째 스킬을 의미합니다.
 
 NAME	TYPE	UNIQUE	NULLABLE
@@ -478,7 +478,7 @@ FROM DEVELOPER_INFOS
 WHERE SKILL_1 = 'Python' OR SKILL_2 = 'Python' OR SKILL_3 = 'Python'
 ORDER BY ID
 
-26. 문제 설명
+Q26. 문제 설명
 낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
 
 Column name	Type	Nullable
@@ -498,7 +498,7 @@ SELECT COUNT(*) AS FISH_COUNT
 FROM FISH_INFO
 WHERE TIME LIKE '2021%'
 
-27. 문제 설명
+Q27. 문제 설명
 다음은 어느 자동차 대여 회사의 자동차 대여 기록 정보를 담은 CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블입니다. CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블은 아래와 같은 구조로 되어있으며, HISTORY_ID, CAR_ID, START_DATE, END_DATE 는 각각 자동차 대여 기록 ID, 자동차 ID, 대여 시작일, 대여 종료일을 나타냅니다.
 
 Column name	Type	Nullable
@@ -521,7 +521,7 @@ FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
 WHERE START_DATE LIKE '2022-09%'
 ORDER BY HISTORY_ID DESC
 
-28. 문제 설명
+Q28. 문제 설명
 낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
 
 Column name	Type	Nullable
@@ -541,7 +541,7 @@ TIME	DATE	FALSE
 SELECT ROUND(AVG(IFNULL(LENGTH, 10)),2) AS AVERAGE_LENGTH
 FROM FISH_INFO
 
-29. 문제 설명
+Q29. 문제 설명
 낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
 
 Column name	Type	Nullable
@@ -562,7 +562,7 @@ FROM FISH_INFO
 ORDER BY LENGTH DESC, ID ASC
 LIMIT 10
 
-30. 문제 설명
+Q30. 문제 설명
 다음은 중고거래 게시판 정보를 담은 USED_GOODS_BOARD 테이블과 중고거래 게시판 첨부파일 정보를 담은 USED_GOODS_REPLY 테이블입니다. USED_GOODS_BOARD 테이블은 다음과 같으며 BOARD_ID, WRITER_ID, TITLE, CONTENTS, PRICE, CREATED_DATE, STATUS, VIEWS은 게시글 ID, 작성자 ID, 게시글 제목, 게시글 내용, 가격, 작성일, 거래상태, 조회수를 의미합니다.
 
 Column name	Type	Nullable
@@ -599,7 +599,7 @@ ON  A.BOARD_ID = B.BOARD_ID
 WHERE  SUBSTRING(A.CREATED_DATE,1,7) = '2022-10'
 ORDER BY  B.CREATED_DATE ASC, A.TITLE ASC;
 
-31. 문제 설명
+Q31. 문제 설명
 대장균들은 일정 주기로 분화하며, 분화를 시작한 개체를 부모 개체, 분화가 되어 나온 개체를 자식 개체라고 합니다.
 다음은 실험실에서 배양한 대장균들의 정보를 담은 ECOLI_DATA 테이블입니다. ECOLI_DATA 테이블의 구조는 다음과 같으며, ID, PARENT_ID, SIZE_OF_COLONY, DIFFERENTIATION_DATE, GENOTYPE 은 각각 대장균 개체의 ID, 부모 개체의 ID, 개체의 크기, 분화되어 나온 날짜, 개체의 형질을 나타냅니다.
 
