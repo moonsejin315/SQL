@@ -9,7 +9,7 @@ MySQL and Oracle🛠
 ## _Programmers Coding Test Practice_
 
 **Lev.1**
-> [Level1 완료]([https://github.com/Yeom-Suji/SQL/blob/main/PROGRAMMERS_QUIZ/LV.1](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level1.sql))
+> [Level1 완료]((https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level1.sql))
 
 **Lev.2**
 > [Level2 진행중]
