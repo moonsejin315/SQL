@@ -234,3 +234,40 @@ FROM APPOINTMENT
 WHERE APNT_YMD LIKE "2022-05-%"
 GROUP BY MCDP_CD
 ORDER BY 5월예약건수, 진료과코드
+
+Q14. 문제 설명
+다음은 어느 한 게임에서 사용되는 아이템들의 아이템 정보를 담은 ITEM_INFO 테이블입니다. ITEM_INFO 테이블은 다음과 같으며, ITEM_ID, ITEM_NAME, RARITY, PRICE는 각각 아이템 ID, 아이템 명, 아이템의 희귀도, 아이템의 가격을 나타냅니다.
+
+Column name	Type	Nullable
+ITEM_ID	INTEGER	FALSE
+ITEM_NAME	VARCHAR(N)	FALSE
+RARITY	INTEGER	FALSE
+PRICE	INTEGER	FALSE
+문제
+ITEM_INFO 테이블에서 희귀도가 'LEGEND'인 아이템들의 가격의 총합을 구하는 SQL문을 작성해 주세요. 이때 컬럼명은 'TOTAL_PRICE'로 지정해 주세요.
+
+정답 -- 코드를 작성해주세요
+SELECT SUM(PRICE) AS TOTAL_PRICE
+FROM ITEM_INFO
+GROUP BY RARITY
+HAVING RARITY = 'LEGEND'
+
+Q15. 문제 설명
+다음은 어느 자동차 대여 회사에서 대여중인 자동차들의 정보를 담은 CAR_RENTAL_COMPANY_CAR 테이블입니다. CAR_RENTAL_COMPANY_CAR 테이블은 아래와 같은 구조로 되어있으며, CAR_ID, CAR_TYPE, DAILY_FEE, OPTIONS 는 각각 자동차 ID, 자동차 종류, 일일 대여 요금(원), 자동차 옵션 리스트를 나타냅니다.
+
+Column name	Type	Nullable
+CAR_ID	INTEGER	FALSE
+CAR_TYPE	VARCHAR(255)	FALSE
+DAILY_FEE	INTEGER	FALSE
+OPTIONS	VARCHAR(255)	FALSE
+자동차 종류는 '세단', 'SUV', '승합차', '트럭', '리무진' 이 있습니다. 자동차 옵션 리스트는 콤마(',')로 구분된 키워드 리스트(옵션 리스트 값 예시: '열선시트', '스마트키', '주차감지센서')로 되어있으며, 키워드 종류는 '주차감지센서', '스마트키', '네비게이션', '통풍시트', '열선시트', '후방카메라', '가죽시트' 가 있습니다.
+
+문제
+CAR_RENTAL_COMPANY_CAR 테이블에서 '통풍시트', '열선시트', '가죽시트' 중 하나 이상의 옵션이 포함된 자동차가 자동차 종류 별로 몇 대인지 출력하는 SQL문을 작성해주세요. 이때 자동차 수에 대한 컬럼명은 CARS로 지정하고, 결과는 자동차 종류를 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT CAR_TYPE, COUNT(*) AS CARS
+FROM CAR_RENTAL_COMPANY_CAR
+WHERE OPTIONS LIKE "%통풍시트%" OR OPTIONS LIKE "%열선시트%" OR OPTIONS LIKE "%가죽시트%"
+GROUP BY CAR_TYPE
+ORDER BY CAR_TYPE
