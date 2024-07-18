@@ -271,3 +271,123 @@ FROM CAR_RENTAL_COMPANY_CAR
 WHERE OPTIONS LIKE "%통풍시트%" OR OPTIONS LIKE "%열선시트%" OR OPTIONS LIKE "%가죽시트%"
 GROUP BY CAR_TYPE
 ORDER BY CAR_TYPE
+
+Q16.문제 설명
+다음은 어느 한 서점에서 판매중인 도서들의 도서 정보(BOOK), 저자 정보(AUTHOR) 테이블입니다.
+
+BOOK 테이블은 각 도서의 정보를 담은 테이블로 아래와 같은 구조로 되어있습니다.
+
+Column name	Type	Nullable	Description
+BOOK_ID	INTEGER	FALSE	도서 ID
+CATEGORY	VARCHAR(N)	FALSE	카테고리 (경제, 인문, 소설, 생활, 기술)
+AUTHOR_ID	INTEGER	FALSE	저자 ID
+PRICE	INTEGER	FALSE	판매가 (원)
+PUBLISHED_DATE	DATE	FALSE	출판일
+AUTHOR 테이블은 도서의 저자의 정보를 담은 테이블로 아래와 같은 구조로 되어있습니다.
+
+Column name	Type	Nullable	Description
+AUTHOR_ID	INTEGER	FALSE	저자 ID
+AUTHOR_NAME	VARCHAR(N)	FALSE	저자명
+문제
+'경제' 카테고리에 속하는 도서들의 도서 ID(BOOK_ID), 저자명(AUTHOR_NAME), 출판일(PUBLISHED_DATE) 리스트를 출력하는 SQL문을 작성해주세요.
+결과는 출판일을 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT B.BOOK_ID, A.AUTHOR_NAME, DATE_FORMAT(B.PUBLISHED_DATE,"%Y-%m-%d") AS PUBLISHED_DATE
+FROM BOOK AS B
+JOIN AUTHOR AS A
+ON B.AUTHOR_ID = A.AUTHOR_ID
+WHERE B.CATEGORY = '경제'
+ORDER BY B.PUBLISHED_DATE ASC
+
+Q17.문제 설명
+다음은 어느 의류 쇼핑몰에서 판매중인 상품들의 상품 정보를 담은 PRODUCT 테이블과 오프라인 상품 판매 정보를 담은 OFFLINE_SALE 테이블 입니다. PRODUCT 테이블은 아래와 같은 구조로 PRODUCT_ID, PRODUCT_CODE, PRICE는 각각 상품 ID, 상품코드, 판매가를 나타냅니다.
+
+Column name	Type	Nullable
+PRODUCT_ID	INTEGER	FALSE
+PRODUCT_CODE	VARCHAR(8)	FALSE
+PRICE	INTEGER	FALSE
+상품 별로 중복되지 않는 8자리 상품코드 값을 가지며, 앞 2자리는 카테고리 코드를 의미합니다.
+
+OFFLINE_SALE 테이블은 아래와 같은 구조로 되어있으며 OFFLINE_SALE_ID, PRODUCT_ID, SALES_AMOUNT, SALES_DATE는 각각 오프라인 상품 판매 ID, 상품 ID, 판매량, 판매일을 나타냅니다.
+
+Column name	Type	Nullable
+OFFLINE_SALE_ID	INTEGER	FALSE
+PRODUCT_ID	INTEGER	FALSE
+SALES_AMOUNT	INTEGER	FALSE
+SALES_DATE	DATE	FALSE
+동일한 날짜, 상품 ID 조합에 대해서는 하나의 판매 데이터만 존재합니다.
+
+문제
+PRODUCT 테이블과 OFFLINE_SALE 테이블에서 상품코드 별 매출액(판매가 * 판매량) 합계를 출력하는 SQL문을 작성해주세요. 결과는 매출액을 기준으로 내림차순 정렬해주시고 매출액이 같다면 상품코드를 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT P.PRODUCT_CODE, SUM(P.PRICE * OS.SALES_AMOUNT) AS SALES
+FROM PRODUCT AS P 
+JOIN OFFLINE_SALE AS OS
+ON OS.PRODUCT_ID = P.PRODUCT_ID
+GROUP BY P.PRODUCT_CODE
+ORDER BY SALES DESC, P.PRODUCT_CODE ASC
+
+Q18. 문제 설명
+다음은 아이스크림 가게의 상반기 주문 정보를 담은 FIRST_HALF 테이블과 아이스크림 성분에 대한 정보를 담은 ICECREAM_INFO 테이블입니다. FIRST_HALF 테이블 구조는 다음과 같으며, SHIPMENT_ID, FLAVOR, TOTAL_ORDER 는 각각 아이스크림 공장에서 아이스크림 가게까지의 출하 번호, 아이스크림 맛, 상반기 아이스크림 총주문량을 나타냅니다. FIRST_HALF 테이블의 기본 키는 FLAVOR입니다.
+
+NAME	TYPE	NULLABLE
+SHIPMENT_ID	INT(N)	FALSE
+FLAVOR	VARCHAR(N)	FALSE
+TOTAL_ORDER	INT(N)	FALSE
+ICECREAM_INFO 테이블 구조는 다음과 같으며, FLAVOR, INGREDITENT_TYPE 은 각각 아이스크림 맛, 아이스크림의 성분 타입을 나타냅니다. INGREDIENT_TYPE에는 아이스크림의 주 성분이 설탕이면 sugar_based라고 입력되고, 아이스크림의 주 성분이 과일이면 fruit_based라고 입력됩니다. ICECREAM_INFO의 기본 키는 FLAVOR입니다. ICECREAM_INFO테이블의 FLAVOR는 FIRST_HALF 테이블의 FLAVOR의 외래 키입니다.
+
+NAME	TYPE	NULLABLE
+FLAVOR	VARCHAR(N)	FALSE
+INGREDIENT_TYPE	VARCHAR(N)	FALSE
+문제
+상반기 동안 각 아이스크림 성분 타입과 성분 타입에 대한 아이스크림의 총주문량을 총주문량이 작은 순서대로 조회하는 SQL 문을 작성해주세요. 이때 총주문량을 나타내는 컬럼명은 TOTAL_ORDER로 지정해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT II.INGREDIENT_TYPE, SUM(TOTAL_ORDER) AS TOTAL_ORDER
+FROM FIRST_HALF AS FH
+JOIN ICECREAM_INFO AS II
+ON FH.FLAVOR = II.FLAVOR
+GROUP BY II.INGREDIENT_TYPE 
+ORDER BY TOTAL_ORDER
+
+Q19. 문제 설명
+ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
+
+NAME	TYPE	NULLABLE
+ANIMAL_ID	VARCHAR(N)	FALSE
+ANIMAL_TYPE	VARCHAR(N)	FALSE
+DATETIME	DATETIME	FALSE
+INTAKE_CONDITION	VARCHAR(N)	FALSE
+NAME	VARCHAR(N)	TRUE
+SEX_UPON_INTAKE	VARCHAR(N)	FALSE
+동물 보호소에 들어온 동물 중 이름이 Lucy, Ella, Pickle, Rogan, Sabrina, Mitty인 동물의 아이디와 이름, 성별 및 중성화 여부를 조회하는 SQL 문을 작성해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT ANIMAL_ID, NAME, SEX_UPON_INTAKE
+FROM ANIMAL_INS
+WHERE NAME = 'Lucy' 
+OR NAME = 'Ella' 
+OR NAME = 'Pickle' 
+OR NAME = 'Rogan'
+OR NAME = 'Sabrina' 
+OR NAME = 'Mitty'
+
+Q20. 문제 설명
+다음은 식당 리뷰 사이트의 회원 정보를 담은 MEMBER_PROFILE 테이블입니다. MEMBER_PROFILE 테이블은 다음과 같으며 MEMBER_ID, MEMBER_NAME, TLNO, GENDER, DATE_OF_BIRTH는 회원 ID, 회원 이름, 회원 연락처, 성별, 생년월일을 의미합니다.
+
+Column name	Type	Nullable
+MEMBER_ID	VARCHAR(100)	FALSE
+MEMBER_NAME	VARCHAR(50)	FALSE
+TLNO	VARCHAR(50)	TRUE
+GENDER	VARCHAR(1)	TRUE
+DATE_OF_BIRTH	DATE	TRUE
+문제
+MEMBER_PROFILE 테이블에서 생일이 3월인 여성 회원의 ID, 이름, 성별, 생년월일을 조회하는 SQL문을 작성해주세요. 이때 전화번호가 NULL인 경우는 출력대상에서 제외시켜 주시고, 결과는 회원ID를 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT MEMBER_ID, MEMBER_NAME, GENDER, DATE_FORMAT(DATE_OF_BIRTH, "%Y-%m-%d") AS DATE_OF_BIRTH
+FROM MEMBER_PROFILE
+WHERE (DATE_OF_BIRTH LIKE '%03%') AND (GENDER = 'W') AND (TLNO IS NOT NULL)
+ORDER BY MEMBER_ID
