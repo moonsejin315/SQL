@@ -391,3 +391,144 @@ SELECT MEMBER_ID, MEMBER_NAME, GENDER, DATE_FORMAT(DATE_OF_BIRTH, "%Y-%m-%d") AS
 FROM MEMBER_PROFILE
 WHERE (DATE_OF_BIRTH LIKE '%03%') AND (GENDER = 'W') AND (TLNO IS NOT NULL)
 ORDER BY MEMBER_ID
+
+Q21. 문제 설명
+다음은 어느 의류 쇼핑몰에서 판매중인 상품들의 정보를 담은 PRODUCT 테이블입니다. PRODUCT 테이블은 아래와 같은 구조로 되어있으며, PRODUCT_ID, PRODUCT_CODE, PRICE는 각각 상품 ID, 상품코드, 판매가를 나타냅니다.
+
+Column name	Type	Nullable
+PRODUCT_ID	INTEGER	FALSE
+PRODUCT_CODE	VARCHAR(8)	FALSE
+PRICE	INTEGER	FALSE
+상품 별로 중복되지 않는 8자리 상품코드 값을 가지며 앞 2자리는 카테고리 코드를 나타냅니다.
+
+문제
+PRODUCT 테이블에서 만원 단위의 가격대 별로 상품 개수를 출력하는 SQL 문을 작성해주세요. 이때 컬럼명은 각각 컬럼명은 PRICE_GROUP, PRODUCTS로 지정해주시고 가격대 정보는 각 구간의 최소금액(10,000원 이상 ~ 20,000 미만인 구간인 경우 10,000)으로 표시해주세요. 결과는 가격대를 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT 
+CASE
+    WHEN (PRICE BETWEEN 0 AND 9999) THEN '0'
+    WHEN (PRICE BETWEEN 10000 AND 19999) THEN '10000'
+    WHEN (PRICE BETWEEN 20000 AND 29999) THEN '20000'
+    WHEN (PRICE BETWEEN 30000 AND 39999) THEN '30000'
+    WHEN (PRICE BETWEEN 40000 AND 49999) THEN '40000'
+    WHEN (PRICE BETWEEN 50000 AND 59999) THEN '50000'
+    WHEN (PRICE BETWEEN 60000 AND 69999) THEN '60000'
+    WHEN (PRICE BETWEEN 70000 AND 79999) THEN '70000'
+    ELSE '80000'
+END AS 'PRICE_GROUP', COUNT(*) AS PRODUCT
+FROM PRODUCT
+GROUP BY PRICE_GROUP
+ORDER BY PRICE_GROUP 
+
+Q22. 문제 설명
+AIR_POLLUTION 테이블은 전국의 월별 미세먼지 정보를 담은 테이블입니다. AIR_POLLUTION 테이블의 구조는 다음과 같으며 LOCATION1, LOCATION2, YM, PM_VAL1, PM_VAL2은 각각 지역구분1, 지역구분2, 측정일, 미세먼지 오염도, 초미세먼지 오염도를 의미합니다.
+
+Column name	Type	Nullable
+LOCATION1	VARCHAR	FALSE
+LOCATION2	VARCHAR	FALSE
+YM	DATE	FALSE
+PM_VAL1	NUMBER	FLASE
+PM_VAL2	NUMBER	FLASE
+문제
+AIR_POLLUTION 테이블에서 수원 지역의 연도 별 평균 미세먼지 오염도와 평균 초미세먼지 오염도를 조회하는 SQL문을 작성해주세요. 이때, 평균 미세먼지 오염도와 평균 초미세먼지 오염도의 컬럼명은 각각 PM10, PM2.5로 해 주시고, 값은 소수 셋째 자리에서 반올림해주세요.
+결과는 연도를 기준으로 오름차순 정렬해주세요.
+
+정답 -- 코드를 작성해주세요
+SELECT YEAR(YM) AS YEAR, ROUND(AVG(PM_VAL1),2) AS PM10, ROUND(AVG(PM_VAL2),2) 'PM2.5'
+FROM AIR_POLLUTION
+WHERE LOCATION2 LIKE '수원'
+GROUP BY YEAR
+ORDER BY YEAR
+
+Q23. 문제 설명
+낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
+
+Column name	Type	Nullable
+ID	INTEGER	FALSE
+FISH_TYPE	INTEGER	FALSE
+LENGTH	FLOAT	TRUE
+TIME	DATE	FALSE
+단, 잡은 물고기의 길이가 10cm 이하일 경우에는 LENGTH 가 NULL 이며, LENGTH 에 NULL 만 있는 경우는 없습니다.
+
+FISH_NAME_INFO 테이블은 물고기의 이름에 대한 정보를 담고 있습니다. FISH_NAME_INFO 테이블의 구조는 다음과 같으며, FISH_TYPE, FISH_NAME 은 각각 물고기의 종류(숫자), 물고기의 이름(문자) 입니다.
+
+Column name	Type	Nullable
+FISH_TYPE	INTEGER	FALSE
+FISH_NAME	VARCHAR	FALSE
+문제
+FISH_NAME_INFO에서 물고기의 종류 별 물고기의 이름과 잡은 수를 출력하는 SQL문을 작성해주세요.
+
+물고기의 이름 컬럼명은 FISH_NAME, 잡은 수 컬럼명은 FISH_COUNT로 해주세요.
+결과는 잡은 수 기준으로 내림차순 정렬해주세요.
+
+정답 -- 코드를 작성해주세요
+SELECT COUNT(*) AS FISH_COUNT, FNI.FISH_NAME
+FROM FISH_NAME_INFO AS FNI
+    JOIN FISH_INFO AS FI
+    ON FNI.FISH_TYPE = FI.FISH_TYPE
+GROUP BY FNI.FISH_NAME
+ORDER BY FISH_COUNT DESC
+
+Q24. 문제 설명
+어느 한 게임에서 사용되는 아이템들은 업그레이드가 가능합니다.
+'ITEM_A'->'ITEM_B'와 같이 업그레이드가 가능할 때
+'ITEM_A'를 'ITEM_B'의 PARENT 아이템,
+PARENT 아이템이 없는 아이템을 ROOT 아이템이라고 합니다.
+
+예를 들어 'ITEM_A'->'ITEM_B'->'ITEM_C' 와 같이 업그레이드가 가능한 아이템이 있다면
+'ITEM_C'의 PARENT 아이템은 'ITEM_B'
+'ITEM_B'의 PARENT 아이템은 'ITEM_A'
+ROOT 아이템은 'ITEM_A'가 됩니다.
+
+다음은 해당 게임에서 사용되는 아이템 정보를 담은 ITEM_INFO 테이블과 아이템 관계를 나타낸 ITEM_TREE 테이블입니다. ITEM_INFO 테이블은 다음과 같으며, ITEM_ID, ITEM_NAME, RARITY, PRICE는 각각 아이템 ID, 아이템 명, 아이템의 희귀도, 아이템의 가격을 나타냅니다.
+
+Column name	Type	Nullable
+ITEM_ID	INTEGER	FALSE
+ITEM_NAME	VARCHAR(N)	FALSE
+RARITY	INTEGER	FALSE
+PRICE	INTEGER	FALSE
+ITEM_TREE 테이블은 다음과 같으며, ITEM_ID, PARENT_ITEM_ID는 각각 아이템 ID, PARENT 아이템의 ID를 나타냅니다.
+
+Column name	Type	Nullable
+ITEM_ID	INTEGER	FALSE
+PARENT_ITEM_ID	INTEGER	TRUE
+단, 각 아이템들은 오직 하나의 PARENT 아이템 ID를 가지며, ROOT 아이템의 PARENT 아이템 ID는 NULL 입니다.
+
+ROOT 아이템이 없는 경우는 존재하지 않습니다.
+
+문제
+ROOT 아이템을 찾아 아이템 ID(ITEM_ID), 아이템 명(ITEM_NAME)을 출력하는 SQL문을 작성해 주세요. 이때, 결과는 아이템 ID를 기준으로 오름차순 정렬해 주세요.
+
+정답 -- 코드를 작성해주세요
+SELECT II.ITEM_ID, II.ITEM_NAME
+FROM ITEM_INFO AS II
+    JOIN ITEM_TREE AS IT
+    ON II.ITEM_ID = IT.ITEM_ID
+WHERE IT.PARENT_ITEM_ID IS NULL
+ORDER BY II.ITEM_ID
+
+Q25. 문제 설명
+다음은 중고거래 게시판 정보를 담은 USED_GOODS_BOARD 테이블입니다. USED_GOODS_BOARD 테이블은 다음과 같으며 BOARD_ID, WRITER_ID, TITLE, CONTENTS, PRICE, CREATED_DATE, STATUS, VIEWS은 게시글 ID, 작성자 ID, 게시글 제목, 게시글 내용, 가격, 작성일, 거래상태, 조회수를 의미합니다.
+
+Column name	Type	Nullable
+BOARD_ID	VARCHAR(5)	FALSE
+WRITER_ID	VARCHAR(50)	FALSE
+TITLE	VARCHAR(100)	FALSE
+CONTENTS	VARCHAR(1000)	FALSE
+PRICE	NUMBER	FALSE
+CREATED_DATE	DATE	FALSE
+STATUS	VARCHAR(10)	FALSE
+VIEWS	NUMBER	FALSE
+문제
+USED_GOODS_BOARD 테이블에서 2022년 10월 5일에 등록된 중고거래 게시물의 게시글 ID, 작성자 ID, 게시글 제목, 가격, 거래상태를 조회하는 SQL문을 작성해주세요. 거래상태가 SALE 이면 판매중, RESERVED이면 예약중, DONE이면 거래완료 분류하여 출력해주시고, 결과는 게시글 ID를 기준으로 내림차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT BOARD_ID, WRITER_ID, TITLE, PRICE, 
+    CASE WHEN STATUS = 'SALE' THEN '판매중'
+         WHEN STATUS = 'RESERVED' THEN '예약중'
+         ELSE '거래완료'
+         END STATUS
+FROM USED_GOODS_BOARD
+WHERE CREATED_DATE LIKE '2022-10-05%'
+ORDER BY BOARD_ID DESC
