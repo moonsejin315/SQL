@@ -14,7 +14,7 @@
 > [Level1 완료](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level1.sql)
 
 **Level.2**
-> [Level2 진행중](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level2.sql)
+> [Level2 완료](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level2.sql)
 
 **Level.3**
-> [Lev3 진행중]
+> [Level3 진행중](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level3.sql)
