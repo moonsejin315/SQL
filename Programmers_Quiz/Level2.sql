@@ -532,3 +532,105 @@ SELECT BOARD_ID, WRITER_ID, TITLE, PRICE,
 FROM USED_GOODS_BOARD
 WHERE CREATED_DATE LIKE '2022-10-05%'
 ORDER BY BOARD_ID DESC
+
+Q26. 문제 설명
+낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
+
+Column name	Type	Nullable
+ID	INTEGER	FALSE
+FISH_TYPE	INTEGER	FALSE
+LENGTH	FLOAT	TRUE
+TIME	DATE	FALSE
+단, 잡은 물고기의 길이가 10cm 이하일 경우에는 LENGTH 가 NULL 이며, LENGTH 에 NULL 만 있는 경우는 없습니다.
+
+문제
+월별 잡은 물고기의 수와 월을 출력하는 SQL문을 작성해주세요.
+
+잡은 물고기 수 컬럼명은 FISH_COUNT, 월 컬럼명은 MONTH로 해주세요.
+결과는 월을 기준으로 오름차순 정렬해주세요.
+단, 월은 숫자형태 (1~12) 로 출력하며 9 이하의 숫자는 두 자리로 출력하지 않습니다. 잡은 물고기가 없는 월은 출력하지 않습니다.
+
+정답 -- 코드를 작성해주세요
+SELECT COUNT(*) AS FISH_COUNT ,MONTH(TIME) AS MONTH
+FROM FISH_INFO
+GROUP BY MONTH
+ORDER BY MONTH 
+
+Q27. 문제 설명
+다음은 어느 의류 쇼핑몰의 온라인 상품 판매 정보를 담은 ONLINE_SALE 테이블 입니다. ONLINE_SALE 테이블은 아래와 같은 구조로 되어있으며 ONLINE_SALE_ID, USER_ID, PRODUCT_ID, SALES_AMOUNT, SALES_DATE는 각각 온라인 상품 판매 ID, 회원 ID, 상품 ID, 판매량, 판매일을 나타냅니다.
+
+Column name	Type	Nullable
+ONLINE_SALE_ID	INTEGER	FALSE
+USER_ID	INTEGER	FALSE
+PRODUCT_ID	INTEGER	FALSE
+SALES_AMOUNT	INTEGER	FALSE
+SALES_DATE	DATE	FALSE
+동일한 날짜, 회원 ID, 상품 ID 조합에 대해서는 하나의 판매 데이터만 존재합니다.
+
+문제
+ONLINE_SALE 테이블에서 동일한 회원이 동일한 상품을 재구매한 데이터를 구하여, 재구매한 회원 ID와 재구매한 상품 ID를 출력하는 SQL문을 작성해주세요. 결과는 회원 ID를 기준으로 오름차순 정렬해주시고 회원 ID가 같다면 상품 ID를 기준으로 내림차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT USER_ID, PRODUCT_ID
+FROM ONLINE_SALE
+GROUP BY USER_ID, PRODUCT_ID
+HAVING count(*)>=2
+ORDER BY USER_ID, PRODUCT_ID DESC
+
+Q28. 문제 설명
+다음은 어느 자동차 대여 회사의 자동차 대여 기록 정보를 담은 CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블입니다. CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블은 아래와 같은 구조로 되어있으며, HISTORY_ID, CAR_ID, START_DATE, END_DATE 는 각각 자동차 대여 기록 ID, 자동차 ID, 대여 시작일, 대여 종료일을 나타냅니다.
+
+Column name	Type	Nullable
+HISTORY_ID	INTEGER	FALSE
+CAR_ID	INTEGER	FALSE
+START_DATE	DATE	FALSE
+END_DATE	DATE	FALSE
+문제
+CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블에서 평균 대여 기간이 7일 이상인 자동차들의 자동차 ID와 평균 대여 기간(컬럼명: AVERAGE_DURATION) 리스트를 출력하는 SQL문을 작성해주세요. 평균 대여 기간은 소수점 두번째 자리에서 반올림하고, 결과는 평균 대여 기간을 기준으로 내림차순 정렬해주시고, 평균 대여 기간이 같으면 자동차 ID를 기준으로 내림차순 정렬해주세요.
+
+정답 -- 코드를 입력하세요
+SELECT CAR_ID, ROUND(AVG(DATEDIFF(END_DATE, START_DATE)+1),1) AS AVERAGE_DURATION
+FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
+GROUP BY CAR_ID
+HAVING AVG(DATEDIFF(END_DATE, START_DATE) + 1) >= 7
+ORDER BY AVERAGE_DURATION DESC, CAR_ID DESC
+
+Q29. 문제 설명
+HR_DEPARTMENT 테이블은 회사의 부서 정보를 담은 테이블입니다. HR_DEPARTMENT 테이블의 구조는 다음과 같으며 DEPT_ID, DEPT_NAME_KR, DEPT_NAME_EN, LOCATION은 각각 부서 ID, 국문 부서명, 영문 부서명, 부서 위치를 의미합니다.
+
+Column name	Type	Nullable
+DEPT_ID	VARCHAR	FALSE
+DEPT_NAME_KR	VARCHAR	FALSE
+DEPT_NAME_EN	VARCHAR	FALSE
+LOCATION	VARCHAR	FLASE
+HR_EMPLOYEES 테이블은 회사의 사원 정보를 담은 테이블입니다. HR_EMPLOYEES 테이블의 구조는 다음과 같으며 EMP_NO, EMP_NAME, DEPT_ID, POSITION, EMAIL, COMP_TEL, HIRE_DATE, SAL은 각각 사번, 성명, 부서 ID, 직책, 이메일, 전화번호, 입사일, 연봉을 의미합니다.
+
+Column name	Type	Nullable
+EMP_NO	VARCHAR	FALSE
+EMP_NAME	VARCHAR	FALSE
+DEPT_ID	VARCHAR	FALSE
+POSITION	VARCHAR	FALSE
+EMAIL	VARCHAR	FALSE
+COMP_TEL	VARCHAR	FALSE
+HIRE_DATE	DATE	FALSE
+SAL	NUMBER	FALSE
+HR_GRADE 테이블은 2022년 사원의 평가 정보를 담은 테이블입니다. HR_GRADE의 구조는 다음과 같으며 EMP_NO, YEAR, HALF_YEAR, SCORE는 각각 사번, 연도, 반기, 평가 점수를 의미합니다.
+
+Column name	Type	Nullable
+EMP_NO	VARCHAR	FALSE
+YEAR	NUMBER	FALSE
+HALF_YEAR	NUMBER	FALSE
+SCORE	NUMBER	FALSE
+문제
+HR_DEPARTMENT, HR_EMPLOYEES, HR_GRADE 테이블에서 2022년도 한해 평가 점수가 가장 높은 사원 정보를 조회하려 합니다. 2022년도 평가 점수가 가장 높은 사원들의 점수, 사번, 성명, 직책, 이메일을 조회하는 SQL문을 작성해주세요.
+
+2022년도의 평가 점수는 상,하반기 점수의 합을 의미하고, 평가 점수를 나타내는 컬럼의 이름은 SCORE로 해주세요.
+
+정답 -- 코드를 작성해주세요
+SELECT SUM(SCORE) AS SCORE, HG.EMP_NO, HE.EMP_NAME, HE.POSITION, HE.EMAIL
+FROM HR_EMPLOYEES AS HE
+    JOIN HR_GRADE AS HG ON HE.EMP_NO = HG.EMP_NO
+GROUP BY YEAR, EMP_NO
+HAVING HG.YEAR = '2022'
+ORDER BY 1 DESC
+LIMIT 1
