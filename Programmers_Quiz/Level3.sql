@@ -237,3 +237,173 @@ FROM ANIMAL_INS AI
 JOIN ANIMAL_OUTS AO ON AI.ANIMAL_ID = AO.ANIMAL_ID
 WHERE AI.DATETIME > AO.DATETIME
 ORDER BY AI.DATETIME
+
+Q6. 문제 설명
+ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
+
+NAME	TYPE	NULLABLE
+ANIMAL_ID	VARCHAR(N)	FALSE
+ANIMAL_TYPE	VARCHAR(N)	FALSE
+DATETIME	DATETIME	FALSE
+INTAKE_CONDITION	VARCHAR(N)	FALSE
+NAME	VARCHAR(N)	TRUE
+SEX_UPON_INTAKE	VARCHAR(N)	FALSE
+ANIMAL_OUTS 테이블은 동물 보호소에서 입양 보낸 동물의 정보를 담은 테이블입니다. ANIMAL_OUTS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, NAME, SEX_UPON_OUTCOME는 각각 동물의 아이디, 생물 종, 입양일, 이름, 성별 및 중성화 여부를 나타냅니다. ANIMAL_OUTS 테이블의 ANIMAL_ID는 ANIMAL_INS의 ANIMAL_ID의 외래 키입니다.
+
+NAME	TYPE	NULLABLE
+ANIMAL_ID	VARCHAR(N)	FALSE
+ANIMAL_TYPE	VARCHAR(N)	FALSE
+DATETIME	DATETIME	FALSE
+NAME	VARCHAR(N)	TRUE
+SEX_UPON_OUTCOME	VARCHAR(N)	FALSE
+입양을 간 동물 중, 보호 기간이 가장 길었던 동물 두 마리의 아이디와 이름을 조회하는 SQL문을 작성해주세요. 이때 결과는 보호 기간이 긴 순으로 조회해야 합니다.
+
+예시
+예를 들어, ANIMAL_INS 테이블과 ANIMAL_OUTS 테이블이 다음과 같다면
+
+ANIMAL_INS
+
+ANIMAL_ID	ANIMAL_TYPE	DATETIME	INTAKE_CONDITION	NAME	SEX_UPON_INTAKE
+A354597	Cat	2014-05-02 12:16:00	Normal	Ariel	Spayed Female
+A362707	Dog	2016-01-27 12:27:00	Sick	Girly Girl	Spayed Female
+A370507	Cat	2014-10-27 14:43:00	Normal	Emily	Spayed Female
+A414513	Dog	2016-06-07 09:17:00	Normal	Rocky	Neutered Male
+ANIMAL_OUTS
+
+ANIMAL_ID	ANIMAL_TYPE	DATETIME	NAME	SEX_UPON_OUTCOME
+A354597	Cat	2014-06-03 12:30:00	Ariel	Spayed Female
+A362707	Dog	2017-01-10 10:44:00	Girly Girl	Spayed Female
+A370507	Cat	2015-08-15 09:24:00	Emily	Spayed Female
+SQL문을 실행하면 다음과 같이 나와야 합니다.
+
+ANIMAL_ID	NAME
+A362707	Girly Girl
+A370507	Emily
+※ 입양을 간 동물이 2마리 이상인 경우만 입력으로 주어집니다.
+
+정답
+-- 코드를 입력하세요
+-- 입양을 간 동물 중(OUTS 날짜 O), 보호 기간이 가장 길었던 동물 두 마리
+SELECT 
+    ANIMAL_ID,
+    NAME
+FROM(SELECT 
+    AI.ANIMAL_ID AS ANIMAL_ID,
+    AI.NAME AS NAME,
+    DATEDIFF(AO.DATETIME, AI.DATETIME) AS DATE
+FROM ANIMAL_INS AI
+JOIN ANIMAL_OUTS AO ON AI.ANIMAL_ID = AO.ANIMAL_ID
+WHERE AO.DATETIME IS NOT NULL
+ORDER BY DATE DESC
+LIMIT 2
+) AS SELECTED
+
+Q7. 문제 설명
+다음은 중고 거래 게시판 정보를 담은 USED_GOODS_BOARD 테이블과 중고 거래 게시판 사용자 정보를 담은 USED_GOODS_USER 테이블입니다. USED_GOODS_BOARD 테이블은 다음과 같으며 BOARD_ID, WRITER_ID, TITLE, CONTENTS, PRICE, CREATED_DATE, STATUS, VIEWS는 게시글 ID, 작성자 ID, 게시글 제목, 게시글 내용, 가격, 작성일, 거래상태, 조회수를 의미합니다.
+
+Column name	Type	Nullable
+BOARD_ID	VARCHAR(5)	FALSE
+WRITER_ID	VARCHAR(50)	FALSE
+TITLE	VARCHAR(100)	FALSE
+CONTENTS	VARCHAR(1000)	FALSE
+PRICE	NUMBER	FALSE
+CREATED_DATE	DATE	FALSE
+STATUS	VARCHAR(10)	FALSE
+VIEWS	NUMBER	FALSE
+USED_GOODS_USER 테이블은 다음과 같으며 USER_ID, NICKNAME, CITY, STREET_ADDRESS1, STREET_ADDRESS2, TLNO는 각각 회원 ID, 닉네임, 시, 도로명 주소, 상세 주소, 전화번호를 를 의미합니다.
+
+Column name	Type	Nullable
+USER_ID	VARCHAR(50)	FALSE
+NICKNAME	VARCHAR(100)	FALSE
+CITY	VARCHAR(100)	FALSE
+STREET_ADDRESS1	VARCHAR(100)	FALSE
+STREET_ADDRESS2	VARCHAR(100)	TRUE
+TLNO	VARCHAR(20)	FALSE
+문제
+USED_GOODS_BOARD와 USED_GOODS_USER 테이블에서 완료된 중고 거래의 총금액이 70만 원 이상인 사람의 회원 ID, 닉네임, 총거래금액을 조회하는 SQL문을 작성해주세요. 결과는 총거래금액을 기준으로 오름차순 정렬해주세요.
+
+예시
+USED_GOODS_BOARD 테이블이 다음과 같고
+
+BOARD_ID	WRITER_ID	TITLE	CONTENTS	PRICE	CREATED_DATE	STATUS	VIEWS
+B0001	zkzkdh1	캠핑의자	가벼워요 깨끗한 상태입니다. 2개	25000	2022-11-29	SALE	34
+B0002	miyeon89	벽걸이 에어컨	엘지 휘센 7평	100000	2022-11-29	SALE	55
+B0003	dhfkzmf09	에어팟 맥스	에어팟 맥스 스카이 블루 색상 판매합니다.	450000	2022-11-26	DONE	67
+B0004	sangjune1	파파야나인 포르쉐 푸쉬카	예민하신분은 피해주세요	30000	2022-11-30	DONE	78
+B0005	zkzkdh1	애플워치7	애플워치7 실버 스텐 45미리 판매합니다.	700000	2022-11-30	DONE	99
+USED_GOODS_USER 테이블이 다음과 같을 때
+
+USER_ID	NICKNAME	CITY	STREET_ADDRESS1	STREET_ADDRESS2	TLNO
+cjfwls91	점심만금식	성남시	분당구 내정로 185	501호	01036344964
+zkzkdh1	후후후	성남시	분당구 내정로 35	가동 1202호	01032777543
+spdlqj12	크크큭	성남시	분당구 수내로 206	2019동 801호	01087234922
+xlqpfh2	잉여킹	성남시	분당구 수내로 1	001-004	01064534911
+dhfkzmf09	찐찐	성남시	분당구 수내로 13	A동 1107호	01053422914
+SQL을 실행하면 다음과 같이 출력되어야 합니다.
+
+USER_ID	NICKNAME	TOTAL_SALES
+zkzkdh1	후후후	700000
+
+정답
+-- 코드를 입력하세요
+-- 완료된 중고 거래의 총금액 70만원 이상
+-- 회원ID, 닉네임, 총거래금액
+-- 총거래금액 오름차순
+SELECT 
+    U.USER_ID AS USER_ID,
+    U.NICKNAME AS NICKNAME,
+    SUM(B.PRICE) AS PRICE
+FROM USED_GOODS_BOARD B
+JOIN USED_GOODS_USER U ON B.WRITER_ID = U.USER_ID
+WHERE STATUS = 'DONE'
+GROUP BY USER_ID
+HAVING PRICE >= 700000
+ORDER BY PRICE
+
+Q8. 문제 설명
+다음은 식당의 정보를 담은 REST_INFO 테이블입니다. REST_INFO 테이블은 다음과 같으며 REST_ID, REST_NAME, FOOD_TYPE, VIEWS, FAVORITES, PARKING_LOT, ADDRESS, TEL은 식당 ID, 식당 이름, 음식 종류, 조회수, 즐겨찾기수, 주차장 유무, 주소, 전화번호를 의미합니다.
+
+Column name	Type	Nullable
+REST_ID	VARCHAR(5)	FALSE
+REST_NAME	VARCHAR(50)	FALSE
+FOOD_TYPE	VARCHAR(20)	TRUE
+VIEWS	NUMBER	TRUE
+FAVORITES	NUMBER	TRUE
+PARKING_LOT	VARCHAR(1)	TRUE
+ADDRESS	VARCHAR(100)	TRUE
+TEL	VARCHAR(100)	TRUE
+문제
+REST_INFO 테이블에서 음식종류별로 즐겨찾기수가 가장 많은 식당의 음식 종류, ID, 식당 이름, 즐겨찾기수를 조회하는 SQL문을 작성해주세요. 이때 결과는 음식 종류를 기준으로 내림차순 정렬해주세요.
+
+예시
+REST_INFO 테이블이 다음과 같을 때
+
+REST_ID	REST_NAME	FOOD_TYPE	VIEWS	FAVORITES	PARKING_LOT	ADDRESS	TEL
+00001	은돼지식당	한식	1150345	734	N	서울특별시 중구 다산로 149	010-4484-8751
+00002	하이가쯔네	일식	120034	112	N	서울시 중구 신당동 375-21	NULL
+00003	따띠따띠뜨	양식	1234023	102	N	서울시 강남구 신사동 627-3 1F	02-6397-1023
+00004	스시사카우스	일식	1522074	230	N	서울시 서울시 강남구 신사동 627-27	010-9394-2554
+00005	코슌스	일식	15301	123	N	서울특별시 강남구 언주로153길	010-1315-8729
+SQL을 실행하면 다음과 같이 출력되어야 합니다.
+
+FOOD_TYPE	REST_ID	REST_NAME	FAVORITES
+한식	00001	은돼지식당	734
+일식	00004	스시사카우스	230
+양식	00003	따띠따띠뜨	102
+
+정답 
+-- 코드를 입력하세요
+-- 음식종류별 즐겨찾기 가장 많은
+-- 음식종류 기준 내림차순
+SELECT
+    FOOD_TYPE,
+    REST_ID,
+    REST_NAME,
+    FAVORITES
+FROM REST_INFO
+WHERE FAVORITES IN 
+    (SELECT MAX(FAVORITES)
+    FROM REST_INFO
+    GROUP BY FOOD_TYPE)
+GROUP BY FOOD_TYPE
+ORDER BY FOOD_TYPE DESC
