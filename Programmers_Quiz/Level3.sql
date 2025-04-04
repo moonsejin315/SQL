@@ -541,3 +541,138 @@ JOIN USED_GOODS_USER U ON B.WRITER_ID = U.USER_ID
 GROUP BY WRITER_ID
 HAVING COUNT(USER_ID) >= 3
 ORDER BY USER_ID DESC
+
+Q11. 문제 설명
+대장균들은 일정 주기로 분화하며, 분화를 시작한 개체를 부모 개체, 분화가 되어 나온 개체를 자식 개체라고 합니다.
+다음은 실험실에서 배양한 대장균들의 정보를 담은 ECOLI_DATA 테이블입니다. ECOLI_DATA 테이블의 구조는 다음과 같으며, ID, PARENT_ID, SIZE_OF_COLONY, DIFFERENTIATION_DATE, GENOTYPE 은 각각 대장균 개체의 ID, 부모 개체의 ID, 개체의 크기, 분화되어 나온 날짜, 개체의 형질을 나타냅니다.
+
+Column name	Type	Nullable
+ID	INTEGER	FALSE
+PARENT_ID	INTEGER	TRUE
+SIZE_OF_COLONY	INTEGER	FALSE
+DIFFERENTIATION_DATE	DATE	FALSE
+GENOTYPE	INTEGER	FALSE
+최초의 대장균 개체의 PARENT_ID 는 NULL 값입니다.
+
+문제
+대장균 개체의 크기가 100 이하라면 'LOW', 100 초과 1000 이하라면 'MEDIUM', 1000 초과라면 'HIGH' 라고 분류합니다. 대장균 개체의 ID(ID) 와 분류(SIZE)를 출력하는 SQL 문을 작성해주세요.이때 결과는 개체의 ID 에 대해 오름차순 정렬해주세요.
+
+예시
+예를 들어 ECOLI_DATA 테이블이 다음과 같다면
+
+ID	PARENT_ID	SIZE_OF_COLONY	DIFFERENTIATION_DATE	GENOTYPE
+1	NULL	17	2019/01/01	5
+2	NULL	150	2019/01/01	3
+3	1	4000	2020/01/01	4
+대장균 개체 ID(ID) 1,2,3 에 대해 개체의 크기는 각각 17, 150, 4000 이므로 분류된 이름은 각각 'LOW', 'MEDIUM', 'HIGH' 입니다. 따라서 결과를 개체의 ID 에 대해 오름차순 정렬하면 다음과 같아야 합니다.
+
+ID	SIZE
+1	LOW
+2	MEDIUM
+3	HIGH
+
+정답
+-- 코드를 작성해주세요
+-- 대장균 개체 크기 100 이하면 'LOW'
+-- 100초과 1000이하면 'MEDIUM'
+-- 1000초과면 'HIGH'
+-- 개체ID 오름차순 정렬
+SELECT 
+    ID,
+    CASE
+    WHEN SIZE_OF_COLONY <= 100 THEN 'LOW'
+    WHEN SIZE_OF_COLONY BETWEEN 100 AND 1000 THEN 'MEDIUM'
+    ELSE 'HIGH'
+    END AS SIZE
+FROM ECOLI_DATA
+ORDER BY ID ASC
+
+Q12. 문제 설명
+ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
+
+NAME	TYPE	NULLABLE
+ANIMAL_ID	VARCHAR(N)	FALSE
+ANIMAL_TYPE	VARCHAR(N)	FALSE
+DATETIME	DATETIME	FALSE
+INTAKE_CONDITION	VARCHAR(N)	FALSE
+NAME	VARCHAR(N)	TRUE
+SEX_UPON_INTAKE	VARCHAR(N)	FALSE
+ANIMAL_OUTS 테이블은 동물 보호소에서 입양 보낸 동물의 정보를 담은 테이블입니다. ANIMAL_OUTS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, NAME, SEX_UPON_OUTCOME는 각각 동물의 아이디, 생물 종, 입양일, 이름, 성별 및 중성화 여부를 나타냅니다. ANIMAL_OUTS 테이블의 ANIMAL_ID는 ANIMAL_INS의 ANIMAL_ID의 외래 키입니다.
+
+NAME	TYPE	NULLABLE
+ANIMAL_ID	VARCHAR(N)	FALSE
+ANIMAL_TYPE	VARCHAR(N)	FALSE
+DATETIME	DATETIME	FALSE
+NAME	VARCHAR(N)	TRUE
+SEX_UPON_OUTCOME	VARCHAR(N)	FALSE
+천재지변으로 인해 일부 데이터가 유실되었습니다. 입양을 간 기록은 있는데, 보호소에 들어온 기록이 없는 동물의 ID와 이름을 ID 순으로 조회하는 SQL문을 작성해주세요.
+
+예시
+예를 들어, ANIMAL_INS 테이블과 ANIMAL_OUTS 테이블이 다음과 같다면
+
+ANIMAL_INS
+
+ANIMAL_ID	ANIMAL_TYPE	DATETIME	INTAKE_CONDITION	NAME	SEX_UPON_INTAKE
+A352713	Cat	2017-04-13 16:29:00	Normal	Gia	Spayed Female
+A350375	Cat	2017-03-06 15:01:00	Normal	Meo	Neutered Male
+ANIMAL_OUTS
+
+ANIMAL_ID	ANIMAL_TYPE	DATETIME	NAME	SEX_UPON_OUTCOME
+A349733	Dog	2017-09-27 19:09:00	Allie	Spayed Female
+A352713	Cat	2017-04-25 12:25:00	Gia	Spayed Female
+A349990	Cat	2018-02-02 14:18:00	Spice	Spayed Female
+ANIMAL_OUTS 테이블에서
+
+Allie의 ID는 ANIMAL_INS에 없으므로, Allie의 데이터는 유실되었습니다.
+Gia의 ID는 ANIMAL_INS에 있으므로, Gia의 데이터는 유실되지 않았습니다.
+Spice의 ID는 ANIMAL_INS에 없으므로, Spice의 데이터는 유실되었습니다.
+따라서 SQL문을 실행하면 다음과 같이 나와야 합니다.
+
+ANIMAL_ID	NAME
+A349733	Allie
+A349990	Spice
+
+정답
+-- 코드를 입력하세요
+-- 입양 간 기록 O, 보호소 들어온 기록 X
+-- 동물 ID와 이름 , ID순으로 조회
+SELECT
+    O.ANIMAL_ID,
+    O.NAME
+FROM ANIMAL_INS I
+RIGHT JOIN ANIMAL_OUTS O ON I.ANIMAL_ID = O.ANIMAL_ID
+WHERE I.DATETIME IS NULL
+ORDER BY O.ANIMAL_ID
+
+Q13. 문제 설명
+다음은 어느 자동차 대여 회사의 자동차 대여 기록 정보를 담은 CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블입니다. CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블은 아래와 같은 구조로 되어있으며, HISTORY_ID, CAR_ID, START_DATE, END_DATE 는 각각 자동차 대여 기록 ID, 자동차 ID, 대여 시작일, 대여 종료일을 나타냅니다.
+
+Column name	Type	Nullable
+HISTORY_ID	INTEGER	FALSE
+CAR_ID	INTEGER	FALSE
+START_DATE	DATE	FALSE
+END_DATE	DATE	FALSE
+문제
+CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블에서 2022년 10월 16일에 대여 중인 자동차인 경우 '대여중' 이라고 표시하고, 대여 중이지 않은 자동차인 경우 '대여 가능'을 표시하는 컬럼(컬럼명: AVAILABILITY)을 추가하여 자동차 ID와 AVAILABILITY 리스트를 출력하는 SQL문을 작성해주세요. 이때 반납 날짜가 2022년 10월 16일인 경우에도 '대여중'으로 표시해주시고 결과는 자동차 ID를 기준으로 내림차순 정렬해주세요.
+
+예시
+예를 들어 CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블이 다음과 같다면
+
+HISTORY_ID	CAR_ID	START_DATE	END_DATE
+1	4	2022-09-27	2022-09-27
+2	3	2022-10-03	2022-10-04
+3	2	2022-10-05	2022-10-05
+4	1	2022-10-11	2022-10-16
+5	3	2022-10-13	2022-10-15
+6	2	2022-10-15	2022-10-17
+2022년 10월 16일에 대여 중인 자동차는 자동차 ID가 1, 2인 자동차이고, 대여 가능한 자동차는 자동차 ID가 3, 4이므로, '대여중' 또는 '대여 가능' 을 표시하는 컬럼을 추가하고, 자동차 ID를 기준으로 내림차순 정렬하면 다음과 같이 나와야 합니다.
+
+CAR_ID	AVAILABILITY
+4	대여 가능
+3	대여 가능
+2	대여중
+1	대여중
+
+정답
+
+
