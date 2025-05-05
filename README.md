@@ -18,8 +18,3 @@
 
 **Level.3**
 > [Level3 진행중](https://github.com/moonsejin315/SQL/blob/main/Programmers_Quiz/Level3.sql)
-
----
-## 지표설계
-**SQL을 사용한 지표설계 스터디**
-> [지표설계](https://github.com/moonsejin315/SQL/tree/main/%EC%A7%80%ED%91%9C%EC%84%A4%EA%B3%84)
