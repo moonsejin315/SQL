@@ -335,4 +335,404 @@ WHERE YEAR(BS.SALES_DATE) = 2022 AND MONTH(BS.SALES_DATE) = 1
 GROUP BY A.AUTHOR_ID, B.CATEGORY
 ORDER BY A.AUTHOR_ID, B.CATEGORY DESC
 
+Q6. 문제 설명
+다음은 어느 의류 쇼핑몰에 가입한 회원 정보를 담은 USER_INFO 테이블과 온라인 상품 판매 정보를 담은 ONLINE_SALE 테이블 입니다.USER_INFO 테이블은 아래와 같은 구조로 되어있으며 USER_ID, GENDER, AGE, JOINED는 각각 회원 ID, 성별, 나이, 가입일을 나타냅니다.
 
+Column name	Type	Nullable
+USER_ID	INTEGER	FALSE
+GENDER	TINYINT(1)	TRUE
+AGE	INTEGER	TRUE
+JOINED	DATE	FALSE
+GENDER 컬럼은 비어있거나 0 또는 1의 값을 가지며 0인 경우 남자를, 1인 경우는 여자를 나타냅니다.
+
+ONLINE_SALE 테이블은 아래와 같은 구조로 되어있으며, ONLINE_SALE_ID, USER_ID, PRODUCT_ID, SALES_AMOUNT, SALES_DATE는 각각 온라인 상품 판매 ID, 회원 ID, 상품 ID, 판매량, 판매일을 나타냅니다.
+
+Column name	Type	Nullable
+ONLINE_SALE_ID	INTEGER	FALSE
+USER_ID	INTEGER	FALSE
+PRODUCT_ID	INTEGER	FALSE
+SALES_AMOUNT	INTEGER	FALSE
+SALES_DATE	DATE	FALSE
+동일한 날짜, 회원 ID, 상품 ID 조합에 대해서는 하나의 판매 데이터만 존재합니다.
+
+문제
+USER_INFO 테이블과 ONLINE_SALE 테이블에서 년, 월, 성별 별로 상품을 구매한 회원수를 집계하는 SQL문을 작성해주세요. 결과는 년, 월, 성별을 기준으로 오름차순 정렬해주세요. 이때, 성별 정보가 없는 경우 결과에서 제외해주세요.
+
+예시
+예를 들어 USER_INFO 테이블이 다음과 같고
+
+USER_ID	GENDER	AGE	JOINED
+1	1	26	2021-06-01
+2	NULL	NULL	2021-06-25
+3	0	NULL	2021-06-30
+4	0	31	2021-07-03
+5	1	25	2021-07-09
+6	1	33	2021-07-14
+ONLINE_SALE 테이블이 다음과 같다면
+
+ONLINE_SALE_ID	USER_ID	PRODUCT_ID	SALES_AMOUNT	SALES_DATE
+1	1	54	1	2022-01-01
+2	1	3	2	2022-01-25
+3	4	34	1	2022-01-30
+4	6	253	3	2022-02-03
+5	2	31	2	2022-02-09
+6	5	35	1	2022-02-14
+7	5	57	1	2022-02-18
+2022년 1월에 상품을 구매한 회원은 USER_ID 가 1(GENDER=1), 4(GENDER=0)인 회원들이고,
+2022년 2월에 상품을 구매한 회원은 USER_ID 가 2(GENDER=NULL), 5(GENDER=1), 6(GENDER=1)인 회원들 이므로,
+
+년, 월, 성별 별로 상품을 구매한 회원수를 집계하고, 년, 월, 성별을 기준으로 오름차순 정렬하면 다음과 같은 결과가 나와야 합니다.
+
+YEAR	MONTH	GENDER	USERS
+2022	1	0	1
+2022	1	1	1
+2022	2	1	2
+
+A6. -- 코드를 입력하세요
+-- 각 테이블에서 년, 월, 성별 결로 상품을 구매한 회원수
+-- 결과는 년, 월, 성별 기준 오름차순
+-- 성별 정보 없으면 결과에서 제외
+# SELECT *
+# FROM USER_INFO UI
+# RIGHT JOIN ONLINE_SALE OS 
+# ON UI.USER_ID = OS.USER_ID
+WITH SELL_USER AS(
+    SELECT 
+        USER_ID,
+        YEAR(SALES_DATE) AS YEAR,
+        MONTH(SALES_DATE) AS MONTH
+    FROM ONLINE_SALE
+)
+SELECT
+    SU.YEAR,
+    SU.MONTH,
+    UI.GENDER,
+    COUNT(DISTINCT SU.USER_ID) AS USERS
+FROM USER_INFO UI
+LEFT JOIN SELL_USER SU ON UI.USER_ID = SU.USER_ID
+WHERE UI.GENDER IS NOT NULL AND SU.YEAR IS NOT NULL AND UI.GENDER IS NOT NULL
+GROUP BY SU.MONTH, UI.GENDER
+ORDER BY YEAR, MONTH, GENDER
+
+Q7. 문제 설명
+다음은 식당의 정보를 담은 REST_INFO 테이블과 식당의 리뷰 정보를 담은 REST_REVIEW 테이블입니다. REST_INFO 테이블은 다음과 같으며 REST_ID, REST_NAME, FOOD_TYPE, VIEWS, FAVORITES, PARKING_LOT, ADDRESS, TEL은 식당 ID, 식당 이름, 음식 종류, 조회수, 즐겨찾기수, 주차장 유무, 주소, 전화번호를 의미합니다.
+
+Column name	Type	Nullable
+REST_ID	VARCHAR(5)	FALSE
+REST_NAME	VARCHAR(50)	FALSE
+FOOD_TYPE	VARCHAR(20)	TRUE
+VIEWS	NUMBER	TRUE
+FAVORITES	NUMBER	TRUE
+PARKING_LOT	VARCHAR(1)	TRUE
+ADDRESS	VARCHAR(100)	TRUE
+TEL	VARCHAR(100)	TRUE
+REST_REVIEW 테이블은 다음과 같으며 REVIEW_ID, REST_ID, MEMBER_ID, REVIEW_SCORE, REVIEW_TEXT,REVIEW_DATE는 각각 리뷰 ID, 식당 ID, 회원 ID, 점수, 리뷰 텍스트, 리뷰 작성일을 의미합니다.
+
+Column name	Type	Nullable
+REVIEW_ID	VARCHAR(10)	FALSE
+REST_ID	VARCHAR(10)	TRUE
+MEMBER_ID	VARCHAR(100)	TRUE
+REVIEW_SCORE	NUMBER	TRUE
+REVIEW_TEXT	VARCHAR(1000)	TRUE
+REVIEW_DATE	DATE	TRUE
+문제
+REST_INFO와 REST_REVIEW 테이블에서 서울에 위치한 식당들의 식당 ID, 식당 이름, 음식 종류, 즐겨찾기수, 주소, 리뷰 평균 점수를 조회하는 SQL문을 작성해주세요. 이때 리뷰 평균점수는 소수점 세 번째 자리에서 반올림 해주시고 결과는 평균점수를 기준으로 내림차순 정렬해주시고, 평균점수가 같다면 즐겨찾기수를 기준으로 내림차순 정렬해주세요.
+
+예시
+REST_INFO 테이블이 다음과 같고
+
+REST_ID	REST_NAME	FOOD_TYPE	VIEWS	FAVORITES	PARKING_LOT	ADDRESS	TEL
+00028	대우부대찌개	한식	52310	10	N	경기도 용인시 처인구 남사읍 처인성로 309	031-235-1235
+00039	광주식당	한식	23001	20	N	경기도 부천시 산업로8번길 60	031-235-6423
+00035	삼촌식당	일식	532123	80	N	서울특별시 강서구 가로공원로76가길	02-135-1266
+REST_REVIEW 테이블이 다음과 같을 때
+
+REVIEW_ID	REST_ID	MEMBER_ID	REVIEW_SCORE	REVIEW_TEXT	REVIEW_DATE
+R000000065	00028	soobin97@naver.com	5	부찌 국물에서 샤브샤브 맛이나고 깔끔	2022-04-12
+R000000066	00039	yelin1130@gmail.com	5	김치찌개 최곱니다.	2022-02-12
+R000000067	00028	yelin1130@gmail.com	5	햄이 많아서 좋아요	2022-02-22
+R000000068	00035	ksyi0316@gmail.com	5	숙성회가 끝내줍니다.	2022-02-15
+R000000069	00035	yoonsy95@naver.com	4	비린내가 전혀없어요.	2022-04-16
+SQL을 실행하면 다음과 같이 출력되어야 합니다.
+
+REST_ID	REST_NAME	FOOD_TYPE	FAVORITES	ADDRESS	SCORE
+00035	삼촌식당	일식	80	서울특별시 강서구 가로공원로76가길	4.50
+
+A7. -- 코드를 입력하세요
+-- 서울에 위치한 식당 -> CTE
+-- 당 ID, 식당 이름, 음식 종류, 즐겨찾기수, 주소, 리뷰 평균 점수를 조회
+-- 리뷰 평균점수는 소수점 세 번째 자리에서 반올림
+-- 평균점수 기준 내림차순, 즐겨찾기수 기준 내림차순
+SELECT 
+    RI.REST_ID,
+    RI.REST_NAME,
+    RI.FOOD_TYPE,
+    RI.FAVORITES,
+    RI.ADDRESS,
+    ROUND(AVG(REVIEW_SCORE),2) AS SCORE
+FROM REST_INFO RI
+INNER JOIN REST_REVIEW RR ON RI.REST_ID = RR.REST_ID
+WHERE RI.ADDRESS LIKE "서울%"
+GROUP BY RI.REST_ID
+ORDER BY SCORE DESC, RI.FAVORITES DESC
+
+------------------------------------------------------------------
+-- CTE 사용한 쿼리
+WITH SEOUL_REST AS(
+    SELECT
+        REST_ID,
+        REST_NAME,
+        FOOD_TYPE,
+        FAVORITES,
+        ADDRESS
+    FROM REST_INFO
+    WHERE ADDRESS LIKE "서울%"
+)
+SELECT
+    RR.REST_ID,
+    SR.REST_NAME,
+    SR.FOOD_TYPE,
+    SR.FAVORITES,
+    SR.ADDRESS,
+    ROUND(AVG(RR.REVIEW_SCORE), 2) AS SCORE
+FROM REST_REVIEW RR
+INNER JOIN SEOUL_REST SR ON RR.REST_ID = SR.REST_ID
+GROUP BY RR.REST_ID
+ORDER BY SCORE DESC, SR.FAVORITES DESC
+
+Q8. 문제 설명
+CART_PRODUCTS 테이블은 장바구니에 담긴 상품 정보를 담은 테이블입니다. CART_PRODUCTS 테이블의 구조는 다음과 같으며, ID, CART_ID, NAME, PRICE는 각각 테이블의 아이디, 장바구니의 아이디, 상품 종류, 가격을 나타냅니다.
+
+NAME	TYPE
+ID	INT
+CART_ID	INT
+NAME	VARCHAR
+PRICE	INT
+데이터 분석 팀에서는 우유(Milk)와 요거트(Yogurt)를 동시에 구입한 장바구니가 있는지 알아보려 합니다. 우유와 요거트를 동시에 구입한 장바구니의 아이디를 조회하는 SQL 문을 작성해주세요. 이때 결과는 장바구니의 아이디 순으로 나와야 합니다.
+
+예시
+예를 들어 CART_PRODUCTS 테이블이 다음과 같다면
+
+CART_PRODUCTS 테이블
+
+ID	CART_ID	NAME	PRICE
+1630	83	Cereal	3980
+1631	83	Multipurpose Supply	3900
+5491	286	Yogurt	2980
+5504	286	Milk	1880
+8435	448	Milk	1880
+8437	448	Yogurt	2980
+8438	448	Tea	11000
+20236	1034	Yogurt	2980
+20237	1034	Butter	4890
+83번 장바구니에는 Milk와 Yogurt가 모두 없습니다.
+286번 장바구니에는 Milk와 Yogurt가 모두 있습니다.
+448번 장바구니에는 Milk와 Yogurt가 모두 있습니다.
+1034번 장바구니에는 Milk는 없고 Yogurt만 있습니다.
+따라서 SQL 문을 실행하면 다음과 같이 나와야 합니다.
+
+CART_ID
+286
+448
+
+A8. -- 코드를 입력하세요
+-- Milk와 Yogurt 동시에 구입한 장바구니가 있는지
+-- 동시에 구입한 장바구니 아이디 조회
+-- 장바구니의 아이디 순서
+SELECT 
+    CART_ID
+FROM CART_PRODUCTS
+WHERE NAME IN ('Milk', 'Yogurt') 
+GROUP BY CART_ID
+HAVING COUNT(DISTINCT(NAME)) = 2
+ORDER BY CART_ID
+
+Q9. 문제 설명
+다음은 아이스크림 가게의 상반기 주문 정보를 담은 FIRST_HALF 테이블과 7월의 아이스크림 주문 정보를 담은 JULY 테이블입니다. FIRST_HALF 테이블 구조는 다음과 같으며, SHIPMENT_ID, FLAVOR, TOTAL_ORDER는 각각 아이스크림 공장에서 아이스크림 가게까지의 출하 번호, 아이스크림 맛, 상반기 아이스크림 총주문량을 나타냅니다. FIRST_HALF 테이블의 기본 키는 FLAVOR입니다. FIRST_HALF테이블의 SHIPMENT_ID는 JULY테이블의 SHIPMENT_ID의 외래 키입니다.
+
+NAME	TYPE	NULLABLE
+SHIPMENT_ID	INT(N)	FALSE
+FLAVOR	VARCHAR(N)	FALSE
+TOTAL_ORDER	INT(N)	FALSE
+JULY 테이블 구조는 다음과 같으며, SHIPMENT_ID, FLAVOR, TOTAL_ORDER 은 각각 아이스크림 공장에서 아이스크림 가게까지의 출하 번호, 아이스크림 맛, 7월 아이스크림 총주문량을 나타냅니다. JULY 테이블의 기본 키는 SHIPMENT_ID입니다. JULY테이블의 FLAVOR는 FIRST_HALF 테이블의 FLAVOR의 외래 키입니다. 7월에는 아이스크림 주문량이 많아 같은 아이스크림에 대하여 서로 다른 두 공장에서 아이스크림 가게로 출하를 진행하는 경우가 있습니다. 이 경우 같은 맛의 아이스크림이라도 다른 출하 번호를 갖게 됩니다.
+
+NAME	TYPE	NULLABLE
+SHIPMENT_ID	INT(N)	FALSE
+FLAVOR	VARCHAR(N)	FALSE
+TOTAL_ORDER	INT(N)	FALSE
+문제
+7월 아이스크림 총 주문량과 상반기의 아이스크림 총 주문량을 더한 값이 큰 순서대로 상위 3개의 맛을 조회하는 SQL 문을 작성해주세요.
+
+예시
+예를 들어 FIRST_HALF 테이블이 다음과 같고
+
+SHIPMENT_ID	FLAVOR	TOTAL_ORDER
+101	chocolate	3200
+102	vanilla	2800
+103	mint_chocolate	1700
+104	caramel	2600
+105	white_chocolate	3100
+106	peach	2450
+107	watermelon	2150
+108	mango	2900
+109	strawberry	3100
+110	melon	3150
+111	orange	2900
+112	pineapple	2900
+JULY테이블이 다음과 같다면
+
+SHIPMENT_ID	FLAVOR	TOTAL_ORDER
+101	chocolate	520
+102	vanilla	560
+103	mint_chocolate	400
+104	caramel	460
+105	white_chocolate	350
+106	peach	500
+107	watermelon	780
+108	mango	790
+109	strawberry	520
+110	melon	400
+111	orange	250
+112	pineapple	200
+208	mango	110
+209	strawberry	220
+7월 아이스크림 총주문량과 상반기의 아이스크림 총 주문량을 더한 값이 큰 순서대로 상위 3개의 맛을 조회하면 strawberry(520 + 220 + 3,100 = 3,840), mango(790 + 110 + 2,900 = 3,800), chocolate(520 + 3,200 = 3,720) 순입니다. 따라서 SQL 문을 실행하면 다음과 같이 나와야 합니다.
+
+FLAVOR
+strawberry
+mango
+chocolate
+
+A9. -- 코드를 입력하세요
+-- 7월 아이스크림 총 주문량과 상반기의 아이스크림 총 주문량 더한 값
+-- 상위 3개의 맛 조회
+WITH JULY_ICE AS(
+    SELECT
+        J.SHIPMENT_ID,
+        J.FLAVOR,
+        SUM(J.TOTAL_ORDER) + SUM(FH.TOTAL_ORDER) AS SUM_TOTAL_ORDER
+    FROM JULY J
+    LEFT JOIN FIRST_HALF FH ON J.SHIPMENT_ID = FH.SHIPMENT_ID
+    GROUP BY J.FLAVOR
+)
+SELECT 
+    FLAVOR
+FROM JULY_ICE
+ORDER BY SUM_TOTAL_ORDER DESC
+LIMIT 3
+
+Q10. 문제 설명
+HR_DEPARTMENT 테이블은 회사의 부서 정보를 담은 테이블입니다. HR_DEPARTMENT 테이블의 구조는 다음과 같으며 DEPT_ID, DEPT_NAME_KR, DEPT_NAME_EN, LOCATION은 각각 부서 ID, 국문 부서명, 영문 부서명, 부서 위치를 의미합니다.
+
+Column name	Type	Nullable
+DEPT_ID	VARCHAR	FALSE
+DEPT_NAME_KR	VARCHAR	FALSE
+DEPT_NAME_EN	VARCHAR	FALSE
+LOCATION	VARCHAR	FLASE
+HR_EMPLOYEES 테이블은 회사의 사원 정보를 담은 테이블입니다. HR_EMPLOYEES 테이블의 구조는 다음과 같으며 EMP_NO, EMP_NAME, DEPT_ID, POSITION, EMAIL, COMP_TEL, HIRE_DATE, SAL은 각각 사번, 성명, 부서 ID, 직책, 이메일, 전화번호, 입사일, 연봉을 의미합니다.
+
+Column name	Type	Nullable
+EMP_NO	VARCHAR	FALSE
+EMP_NAME	VARCHAR	FALSE
+DEPT_ID	VARCHAR	FALSE
+POSITION	VARCHAR	FALSE
+EMAIL	VARCHAR	FALSE
+COMP_TEL	VARCHAR	FALSE
+HIRE_DATE	DATE	FALSE
+SAL	NUMBER	FALSE
+HR_GRADE 테이블은 2022년 사원의 평가 정보를 담은 테이블입니다. HR_GRADE의 구조는 다음과 같으며 EMP_NO, YEAR, HALF_YEAR, SCORE는 각각 사번, 연도, 반기, 평가 점수를 의미합니다.
+
+Column name	Type	Nullable
+EMP_NO	VARCHAR	FALSE
+YEAR	NUMBER	FALSE
+HALF_YEAR	NUMBER	FALSE
+SCORE	NUMBER	FALSE
+문제
+HR_DEPARTMENT, HR_EMPLOYEES, HR_GRADE 테이블을 이용해 사원별 성과금 정보를 조회하려합니다. 평가 점수별 등급과 등급에 따른 성과금 정보가 아래와 같을 때, 사번, 성명, 평가 등급, 성과금을 조회하는 SQL문을 작성해주세요.
+
+평가등급의 컬럼명은 GRADE로, 성과금의 컬럼명은 BONUS로 해주세요.
+결과는 사번 기준으로 오름차순 정렬해주세요.
+
+기준 점수	평가 등급	성과금(연봉 기준)
+96 이상	S	20%
+90 이상	A	15%
+80 이상	B	10%
+이외	C	0%
+예시
+HR_DEPARTMENT 테이블이 다음과 같고
+
+DEPT_ID	DEPT_NAME_KR	DEPT_NAME_EN	LOCATION
+D0001	법무팀	Law Dep	그렙타워 4층
+D0002	인사팀	Human resources	그렙타워 4층
+D0003	총무팀	General Affairs	그렙타워 4층
+HR_EMPLOYEES 테이블이 다음과 같고
+
+EMP_NO	EMP_NAME	DEPT_ID	POSITION	EMAIL	COMP_TEL	HIRE_DATE	SAL
+2017002	정호식	D0001	팀장	hosick_jung@grep.com	031-8000-1101	2017-03-01	65000000
+2018001	김민석	D0001	팀원	minseock_kim@grep.com	031-8000-1102	2018-03-01	60000000
+2019001	김솜이	D0002	팀장	somi_kim@grep.com	031-8000-1106	2019-03-01	60000000
+2020002	김연주	D0002	팀원	yeonjoo_kim@grep.com	031-8000-1107	2020-03-01	53000000
+2020005	양성태	D0003	팀원	sungtae_yang@grep.com	031-8000-1112	2020-03-01	53000000
+HR_GRADE 테이블이 다음과 같을 때
+
+EMP_NO	YEAR	HALF_YEAR	SCORE
+2017002	2022	1	92
+2018001	2022	1	89
+2019001	2022	1	94
+2020002	2022	1	90
+2020005	2022	1	92
+2017002	2022	2	84
+2018001	2022	2	89
+2019001	2022	2	81
+2020002	2022	2	91
+2020005	2022	2	81
+다음과 같이 사원별 성과금 정보를 출력해야 합니다.
+
+EMP_NO	EMP_NAME	GRADE	BONUS
+2017002	정호식	B	6500000
+2018001	김민석	B	6000000
+2019001	김솜이	B	6000000
+2020002	김연주	A	7950000
+2020005	양성태	B	5300000
+
+A10. # -- 코드를 작성해주세요
+# -- 96점 이상 : S, 성과금 20% // 90점 이상 : A, 성과금 15% // 80점 이상 : B, 성과금 10% // 이외 : C
+# -- 평가 등급의 컬럼명 GRADE, 성과금 컬럼명 BONUS
+# -- 결과는 사번 기준 오름차순
+WITH SCORE_TAB AS(
+SELECT
+    HE.EMP_NO,
+    HE.EMP_NAME,
+    AVG(HG.SCORE) AS SCORE
+FROM HR_EMPLOYEES HE
+LEFT JOIN HR_GRADE HG ON HG.EMP_NO = HE.EMP_NO
+GROUP BY HE.EMP_NO
+), GRADE_TAB AS(
+SELECT 
+    ST.EMP_NO,
+    ST.EMP_NAME,
+    HE.SAL,
+    CASE
+        WHEN SCORE >= 96 THEN 'S'
+        WHEN SCORE >= 90 THEN 'A'
+        WHEN SCORE >= 80 THEN 'B'
+        ELSE 'C'
+    END AS GRADE
+FROM SCORE_TAB ST
+LEFT JOIN HR_EMPLOYEES HE ON ST.EMP_NO = HE.EMP_NO
+)
+SELECT
+    ST.EMP_NO,
+    ST.EMP_NAME,
+    GT.GRADE,
+    CASE
+        WHEN GRADE = 'S' THEN (GT.SAL * 0.2)
+        WHEN GRADE = 'A' THEN (GT.SAL * 0.15)
+        WHEN GRADE = 'B' THEN (GT.SAL * 0.1)
+        ELSE 0
+     END AS BONUS
+FROM SCORE_TAB ST
+LEFT JOIN GRADE_TAB GT ON ST.EMP_NO = GT.EMP_NO
+ORDER BY ST.EMP_NO
+
+Q11. 
