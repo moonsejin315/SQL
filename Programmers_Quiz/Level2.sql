@@ -634,3 +634,120 @@ GROUP BY YEAR, EMP_NO
 HAVING HG.YEAR = '2022'
 ORDER BY 1 DESC
 LIMIT 1
+
+Q30. 문제 설명
+낚시앱에서 사용하는 FISH_INFO 테이블은 잡은 물고기들의 정보를 담고 있습니다. FISH_INFO 테이블의 구조는 다음과 같으며 ID, FISH_TYPE, LENGTH, TIME은 각각 잡은 물고기의 ID, 물고기의 종류(숫자), 잡은 물고기의 길이(cm), 물고기를 잡은 날짜를 나타냅니다.
+
+Column name	Type	Nullable
+ID	INTEGER	FALSE
+FISH_TYPE	INTEGER	FALSE
+LENGTH	FLOAT	TRUE
+TIME	DATE	FALSE
+단, 잡은 물고기의 길이가 10cm 이하일 경우에는 LENGTH 가 NULL 이며, LENGTH 에 NULL 만 있는 경우는 없습니다.
+
+FISH_NAME_INFO 테이블은 물고기의 이름에 대한 정보를 담고 있습니다. FISH_NAME_INFO 테이블의 구조는 다음과 같으며, FISH_TYPE, FISH_NAME 은 각각 물고기의 종류(숫자), 물고기의 이름(문자) 입니다.
+
+Column name	Type	Nullable
+FISH_TYPE	INTEGER	FALSE
+FISH_NAME	VARCHAR	FALSE
+문제
+FISH_INFO 테이블에서 잡은 BASS와 SNAPPER의 수를 출력하는 SQL 문을 작성해주세요.
+
+컬럼명은 'FISH_COUNT'로 해주세요.
+
+예시
+예를 들어 FISH_INFO 테이블이 다음과 같고
+
+ID	FISH_TYPE	LENGTH	TIME
+0	0	30	2021/12/04
+1	0	50	2020/03/07
+2	0	40	2020/03/07
+3	1	20	2022/03/09
+4	1	NULL	2022/04/08
+5	2	13	2021/04/28
+6	0	60	2021/07/27
+7	0	55	2021/01/18
+8	2	73	2020/01/28
+9	2	73	2021/04/08
+10	2	22	2020/06/28
+11	2	17	2022/12/23
+FISH_NAME_INFO 테이블이 다음과 같다면
+
+FISH_TYPE	FISH_NAME
+0	BASS
+1	SNAPPER
+2	ANCHOVY
+'BASS' 는 물고기 종류 0에 해당하고, 'SNAPPER' 는 물고기 종류 1에 해당하므로 잡은 'BASS' 와 'SNAPPER' 수는 7마리입니다.
+
+FISH_COUNT
+7
+
+정답 -- 코드를 작성해주세요
+-- FISH_INFO 테이블에서 잡은 BASS와 SNAPPER의 수를 출력
+SELECT
+    COUNT(*) AS FISH_COUNT
+FROM FISH_INFO FI
+LEFT JOIN FISH_NAME_INFO FN ON FI.FISH_TYPE = FN.FISH_TYPE
+WHERE FN.FISH_NAME IN ('BASS', 'SNAPPER')
+
+Q31. 문제 설명
+대장균들은 일정 주기로 분화하며, 분화를 시작한 개체를 부모 개체, 분화가 되어 나온 개체를 자식 개체라고 합니다.
+다음은 실험실에서 배양한 대장균들의 정보를 담은 ECOLI_DATA 테이블입니다. ECOLI_DATA 테이블의 구조는 다음과 같으며, ID, PARENT_ID, SIZE_OF_COLONY, DIFFERENTIATION_DATE, GENOTYPE 은 각각 대장균 개체의 ID, 부모 개체의 ID, 개체의 크기, 분화되어 나온 날짜, 개체의 형질을 나타냅니다.
+
+Column name	Type	Nullable
+ID	INTEGER	FALSE
+PARENT_ID	INTEGER	TRUE
+SIZE_OF_COLONY	INTEGER	FALSE
+DIFFERENTIATION_DATE	DATE	FALSE
+GENOTYPE	INTEGER	FALSE
+최초의 대장균 개체의 PARENT_ID 는 NULL 값입니다.
+
+문제
+각 분기(QUARTER)별 분화된 대장균의 개체의 총 수(ECOLI_COUNT)를 출력하는 SQL 문을 작성해주세요. 이때 각 분기에는 'Q' 를 붙이고 분기에 대해 오름차순으로 정렬해주세요. 대장균 개체가 분화되지 않은 분기는 없습니다.
+
+예시
+예를 들어 ECOLI_DATA 테이블이 다음과 같다면
+
+ID	PARENT_ID	SIZE_OF_COLONY	DIFFERENTIATION_DATE	GENOTYPE
+1	NULL	10	2019/01/01	5
+2	NULL	2	2019/05/01	3
+3	1	100	2020/01/01	4
+4	2	17	2022/04/01	4
+5	2	10	2020/09/01	6
+6	4	101	2021/12/01	22
+각 분기별로 분화된 대장균 개체는 다음과 같습니다.
+
+1분기 : ID 1, ID 3
+2분기 : ID 2, ID 4
+3분기 : ID 5
+4분기 : ID 6
+
+따라서 결과는 다음과 같아야 합니다
+
+QUARTER	ECOLI_COUNT
+1Q	2
+2Q	2
+3Q	1
+4Q	1
+
+정답 -- 코드를 작성해주세요
+-- 각 분기(QUARTER)별 분화된 대장균의 개체의 총 수(ECOLI_COUNT)를 출력
+--  각 분기에는 'Q' 를 붙이고, 분기에 대해 오름차순
+WITH QUA_TAB AS (
+SELECT 
+    *,
+    CASE
+        WHEN MONTH(DIFFERENTIATION_DATE) IN (1,2,3) THEN '1Q'
+        WHEN MONTH(DIFFERENTIATION_DATE) IN (4,5,6) THEN '2Q'
+        WHEN MONTH(DIFFERENTIATION_DATE) IN (7,8,9) THEN '3Q'
+        ELSE '4Q'
+    END AS QUARTER
+FROM ECOLI_DATA
+)
+SELECT 
+    QUARTER,
+    COUNT(QUARTER) AS ECOLI_COUNT
+FROM QUA_TAB
+GROUP BY QUARTER
+ORDER BY QUARTER 
+
